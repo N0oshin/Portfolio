@@ -1,0 +1,105 @@
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 5vw;
+  background: transparent;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.navbar--scrolled {
+  background: var(--white);
+  box-shadow: 0 1px 0 var(--mid);
+}
+
+.navbar__brand {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  letter-spacing: -0.02em;
+}
+
+.navbar__brand-tag { color: #888; font-weight: 400; }
+.navbar__brand-name { color: var(--dark); }
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.navbar__link {
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: opacity 0.2s;
+}
+.navbar__link:hover { opacity: 0.5; }
+
+.navbar__cta {
+  display: inline-block;
+  background: var(--dark);
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.6rem 1.4rem;
+  margin-left: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.navbar__cta:hover { background: #444; }
+
+.navbar__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.burger-line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--dark);
+  transition: transform 0.3s, opacity 0.3s;
+}
+.burger-line--top-open { transform: translateY(7px) rotate(45deg); }
+.burger-line--mid-open { opacity: 0; }
+.burger-line--bot-open { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+  .navbar__burger { display: flex; }
+  .navbar__links {
+    display: none;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    flex-direction: column;
+    background: var(--white);
+    padding: 1rem 5vw 1.5rem;
+    border-top: 1px solid var(--mid);
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .navbar__links--open { display: flex; }
+  .navbar__cta { margin-left: 0; margin-top: 0.5rem; }
+}

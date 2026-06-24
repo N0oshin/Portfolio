@@ -1,0 +1,110 @@
+.skills {
+  padding: 6rem 5vw;
+  background: var(--light);
+  border-top: 1px solid var(--mid);
+}
+
+.skills__inner { max-width: 1100px; margin: 0 auto; }
+
+.skills__heading-wrap { margin-bottom: 3rem; }
+
+.skills__section-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.skills__heading {
+  font-family: var(--mono);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--dark);
+}
+.skills__tag { color: #bbb; font-weight: 400; }
+
+.skills__layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2px;
+  background: var(--mid);
+  border: 1px solid var(--mid);
+}
+
+.skills__tabs {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.skills__tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1.4rem 1.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--mid);
+  transition: background 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.skills__tab:hover { background: var(--light); }
+.skills__tab--active { background: var(--dark) !important; }
+.skills__tab--active .skills__tab-tag,
+.skills__tab--active .skills__tab-label { color: var(--white); }
+
+.skills__tab-tag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: #aaa;
+  transition: color 0.15s;
+}
+
+.skills__tab-label {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--dark);
+  transition: color 0.15s;
+}
+
+.skills__panel {
+  background: var(--white);
+  padding: 2.5rem;
+}
+
+.skills__list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.9rem 1.5rem;
+}
+
+.skills__item {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--light);
+}
+
+.skills__bullet {
+  color: #888;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .skills__layout {
+    grid-template-columns: 1fr;
+  }
+  .skills__tabs { flex-direction: row; overflow-x: auto; }
+  .skills__tab { border-bottom: none; border-right: 1px solid var(--mid); min-width: 130px; }
+}
