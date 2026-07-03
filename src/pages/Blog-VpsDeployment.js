@@ -7,24 +7,22 @@ const sections = [
       "Whether you're deploying a Next.js app, a React SPA, a Django API, or a Spring Boot service, at some point your code stops living on localhost and has to run on a real server that strangers on the internet can reach.",
       "This article explains how that actually works, from first principles, using real-world analogies and the same handful of tools that show up behind almost every production deployment: DNS, a reverse proxy, a process manager, and SSL certificates.",
     ],
+    callout:
+      "Think of a server as one apartment building with a single street address. Many completely unrelated apps can live inside it, each behind its own internal door — a reverse proxy is the front desk that knows which door to send each visitor to.",
   },
   {
     title: "What Problem Are We Actually Solving?",
     paragraphs: [
-      "Imagine you rent one apartment in a large building.",
-      "The building has a single street address. Your apartment has its own door, somewhere down a hallway nobody outside can see.",
-      "If a visitor only knows the building's street address, they can't find you directly — someone at the front desk needs to know which door to send them to.",
-      "A single server works the same way. It has one public IP address, but it might run several completely unrelated apps, each tucked behind its own internal door.",
+      "A single server has one public IP address, but it might run several unrelated apps at once, each tucked behind its own internal port.",
+      "If a visitor only knows the server's IP, they can't reach a specific app directly — something needs to read the request and decide where it goes.",
     ],
     list: [
-      "Reads which name the visitor asked for",
+      "Reads which domain the visitor asked for",
       "Decides which app should handle the request",
-      "Forwards traffic to the right internal door",
-      "Serves files directly when there's no app needed at all",
+      "Forwards traffic to the right internal port",
+      "Serves files directly when there's no app process needed at all",
     ],
-    closing: "That front desk is a reverse proxy — and on most Linux servers, it's NGINX.",
-    diagram: ["Visitor", "  ↓", "NGINX", "  ↓", "Your Application"],
-    callout: "One server, one IP address, many apps — because NGINX reads the requested domain and routes accordingly.",
+    diagram: ["Visitor", "  ↓", "Reverse Proxy", "  ↓", "Your Application"],
   },
   {
     title: "DNS: The Internet's Phone Book",
@@ -32,20 +30,25 @@ const sections = [
       "Before any of this happens, the visitor's browser needs to know where to even send the request.",
       "You don't memorize your friend's home address — you save their name in your contacts, and your phone looks it up for you. DNS does exactly this for domains: it translates a human name like example.com into a machine address like 192.0.2.10.",
     ],
-    list: [
-      "A record — domain → IPv4 address",
-      "AAAA record — domain → IPv6 address",
-      "CNAME record — domain → another domain name",
-      "NS records — who's in charge of answering DNS questions for this domain at all",
+    subsections: [
+      {
+        heading: "The record types that matter most",
+        paragraphs: [
+          "A record — domain → IPv4 address",
+          "AAAA record — domain → IPv6 address",
+          "CNAME record — domain → another domain name",
+          "NS records — who's in charge of answering DNS questions for this domain at all",
+        ],
+      },
     ],
-    closing: "Almost every deployment issue starts with the same question: does DNS actually point where I think it does?",
     codeBlocks: ["dig example.com +short"],
+    closing: "Almost every deployment issue starts with the same question: does DNS actually point where I think it does?",
   },
   {
     title: "The Proxy Layer: A Middleman In Front of Your Server",
     paragraphs: [
       "Many teams put a service like Cloudflare in front of their domain, on top of their own server.",
-      "Picture a security company that convinces every tenant in the building to route deliveries through their own sorting facility first. Packages get scanned, frequently-requested items get cached for speed, and the building's real address is never exposed publicly — everything is quietly forwarded to the real door behind the scenes.",
+      "Picture a security company that convinces every tenant in a building to route deliveries through their own sorting facility first. Packages get scanned, frequently-requested items get cached for speed, and the building's real address is never exposed publicly — everything is quietly forwarded to the real door behind the scenes.",
     ],
     list: [
       "Hosting the DNS — being the phone book",
@@ -70,34 +73,33 @@ const sections = [
   {
     title: "Every App Needs Its Own Door Number",
     paragraphs: [
-      "Back to the apartment building — port numbers are door numbers.",
-      "Two apps can't use the same door at the same time. Whichever one tries to start second simply fails.",
+      "Port numbers are door numbers. Two apps can't use the same door at the same time — whichever one tries to start second simply fails.",
+      "The reverse proxy listens on the public-facing doors — 80 for plain traffic, 443 for encrypted traffic — and silently routes each request to the correct internal door based on which domain was requested.",
     ],
     codeBlocks: ["sudo ss -tulpn | grep LISTEN"],
-    closing: "The reverse proxy listens on the public-facing doors — 80 for plain traffic, 443 for encrypted traffic — and silently routes each request to the correct internal door based on which domain was requested.",
   },
   {
     title: "Two Fundamentally Different Deployment Patterns",
     paragraphs: [
       "This is the single most important distinction to get right — mixing these up causes some of the most confusing deployment bugs.",
     ],
-  },
-  {
-    title: "Pattern A — Server-Rendered Apps",
-    paragraphs: [
-      "Frameworks that render pages on the server, or expose live API routes, need a persistent running process. The app is a program that stays alive and answers each request in real time.",
+    subsections: [
+      {
+        heading: "Pattern A — Server-rendered apps",
+        paragraphs: [
+          "Frameworks that render pages on the server, or expose live API routes, need a persistent running process. The app is a program that stays alive and answers each request in real time.",
+        ],
+        codeBlocks: ["location / {\n    proxy_pass http://localhost:3001;\n    proxy_http_version 1.1;\n    proxy_set_header Host $host;\n}"],
+      },
+      {
+        heading: "Pattern B — Static sites",
+        paragraphs: [
+          "Frameworks that compile down to plain HTML, CSS, and JavaScript at build time produce a folder of files that need no running process at all.",
+          "The reverse proxy just hands these files to the browser directly — like a librarian retrieving a book from a shelf, not calling someone to write a new one on demand.",
+        ],
+        codeBlocks: ["root /var/www/myapp/dist;\nindex index.html;\nlocation / {\n    try_files $uri /index.html;\n}"],
+      },
     ],
-    diagram: ["NGINX", "  ↓", "Running app process on an internal port", "  (kept alive by a process manager)"],
-    codeBlocks: ["location / {\n    proxy_pass http://localhost:3001;\n    proxy_http_version 1.1;\n    proxy_set_header Host $host;\n}"],
-  },
-  {
-    title: "Pattern B — Static Sites",
-    paragraphs: [
-      "Frameworks that compile down to plain HTML, CSS, and JavaScript at build time produce a folder of files that need no running process at all.",
-      "The reverse proxy just hands these files to the browser directly — like a librarian retrieving a book from a shelf, not calling someone to write a new one on demand.",
-    ],
-    diagram: ["NGINX", "  ↓", "Reads files directly from disk", "  ↓", "Sends to browser"],
-    codeBlocks: ["root /var/www/myapp/dist;\nindex index.html;\nlocation / {\n    try_files $uri /index.html;\n}"],
     callout: "Running a static build through a process manager as if it were a live server either fails outright or does nothing useful — there's simply no server to keep alive.",
   },
   {
@@ -155,6 +157,31 @@ const sections = [
     ],
   },
   {
+    title: "Key Takeaways",
+    subsections: [
+      {
+        heading: "1. DNS decides where traffic goes first.",
+        paragraphs: ["Nothing else matters if DNS doesn't point at your server."],
+      },
+      {
+        heading: "2. A proxy layer can hide your server from certificate tools.",
+        paragraphs: ["Know whether your domain is DNS-only or actively proxied."],
+      },
+      {
+        heading: "3. Static and server-rendered apps deploy differently.",
+        paragraphs: ["One needs a running process; the other just needs files on disk."],
+      },
+      {
+        heading: "4. Process managers keep live apps alive.",
+        paragraphs: ["They restart crashed processes and survive server reboots."],
+      },
+      {
+        heading: "5. SSL is usually terminated at the proxy, not the app.",
+        paragraphs: ["Your application often never sees unencrypted traffic at all."],
+      },
+    ],
+  },
+  {
     title: "Final Thoughts",
     paragraphs: [
       "None of this is exotic — it's the same small set of moving parts, recombined slightly differently, behind almost every app running on the internet today.",
@@ -188,7 +215,7 @@ export default function VpsDeploymentBlogPage() {
         }
 
         .blogPage__inner {
-          max-width: 780px;
+          max-width: 820px;
           margin: 0 auto;
         }
 
@@ -219,8 +246,8 @@ export default function VpsDeploymentBlogPage() {
         .blogPage__tag { color: #bbb; font-weight: 400; }
 
         .blogPage__lead {
-          font-size: 1.1rem;
-          line-height: 1.7;
+          font-size: 1.05rem;
+          line-height: 1.8;
           color: #444;
           margin-bottom: 1.5rem;
         }
@@ -252,9 +279,9 @@ export default function VpsDeploymentBlogPage() {
 
         .blogPage__content p {
           font-size: 0.95rem;
-          line-height: 1.8;
+          line-height: 1.85;
           color: #333;
-          margin-bottom: 1.2rem;
+          margin-bottom: 1.1rem;
         }
 
         .blogPage__content ul {
@@ -288,7 +315,7 @@ export default function VpsDeploymentBlogPage() {
           color: var(--dark);
           font-family: var(--mono);
           font-size: 0.85rem;
-          line-height: 1.5;
+          line-height: 1.55;
         }
 
         .blogPage__subsectionCard {
@@ -322,7 +349,7 @@ export default function VpsDeploymentBlogPage() {
 
       <main className="blogPage__inner">
         <header className="blogPage__heading-wrap">
-          <span className="blogPage__section-label">02 — Backend Infrastructure</span>
+          <span className="blogPage__section-label">03 — Backend Infrastructure</span>
           <h2 className="blogPage__heading">
             <span className="blogPage__tag">&lt;/</span>Deploying to a Real Server <span className="blogPage__tag">&gt;</span>
           </h2>
@@ -365,14 +392,8 @@ export default function VpsDeploymentBlogPage() {
               )}
 
               {section.diagram && <Diagram lines={section.diagram} />}
-
               {section.diagrams && section.diagrams.map((d, i) => <Diagram key={i} lines={d} />)}
-
               {section.codeBlocks && section.codeBlocks.map((block, i) => <CodeBlock key={i}>{block}</CodeBlock>)}
-
-              {section.paragraphsAfter?.map((text, pIdx) => (
-                <p key={`after-${pIdx}`}>{text}</p>
-              ))}
 
               {section.subsections?.map((sub, sIdx) => (
                 <div className="blogPage__subsectionCard" key={sIdx}>

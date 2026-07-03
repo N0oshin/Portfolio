@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import BlogList from './pages/BlogList';
 import NginxBlog from './pages/Blog-NGINX';
 import MicroserviceBlog from './pages/Blog-MicroService-architecture';
+import VpsDeploymentBlog from './pages/Blog-VpsDeployment'
 import './App.css';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           {/* Individual Blog View (Dynamic Route) */}
           <Route path="/blog/nginx-explained" element={<NginxBlog />} />
           <Route path="/blog/microservice-architecture" element={<MicroserviceBlog />} />
+          <Route path="/blog/VpsDeploymentBlogPage" element={<VpsDeploymentBlog />} />
 
         </Routes>
       </main>
