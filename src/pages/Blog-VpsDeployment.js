@@ -5,30 +5,16 @@ const sections = [
     title: "Introduction",
     paragraphs: [
       "Whether you're deploying a Next.js app, a React SPA, a Django API, or a Spring Boot service, at some point your code stops living on localhost and has to run on a real server that strangers on the internet can reach.",
-      "This article explains how that actually works, from first principles, using real-world analogies and the same handful of tools that show up behind almost every production deployment: DNS, a reverse proxy, a process manager, and SSL certificates.",
+      "That journey involves a small, fixed set of building blocks: DNS routes visitors to your server, a proxy layer often sits in front of it, a reverse proxy on the server itself decides which app should answer, and SSL keeps the whole conversation private.",
+      "This article walks through that journey in order — the way a request actually travels — so each piece makes sense in context instead of as an isolated fact.",
     ],
-    callout:
-      "Think of a server as one apartment building with a single street address. Many completely unrelated apps can live inside it, each behind its own internal door — a reverse proxy is the front desk that knows which door to send each visitor to.",
   },
   {
-    title: "What Problem Are We Actually Solving?",
+    title: "Step 1: DNS — Getting the Visitor to the Right Building",
     paragraphs: [
-      "A single server has one public IP address, but it might run several unrelated apps at once, each tucked behind its own internal port.",
-      "If a visitor only knows the server's IP, they can't reach a specific app directly — something needs to read the request and decide where it goes.",
-    ],
-    list: [
-      "Reads which domain the visitor asked for",
-      "Decides which app should handle the request",
-      "Forwards traffic to the right internal port",
-      "Serves files directly when there's no app process needed at all",
-    ],
-    diagram: ["Visitor", "  ↓", "Reverse Proxy", "  ↓", "Your Application"],
-  },
-  {
-    title: "DNS: The Internet's Phone Book",
-    paragraphs: [
-      "Before any of this happens, the visitor's browser needs to know where to even send the request.",
-      "You don't memorize your friend's home address — you save their name in your contacts, and your phone looks it up for you. DNS does exactly this for domains: it translates a human name like example.com into a machine address like 192.0.2.10.",
+      "Before anything else happens, a browser needs to know where to even send a request.",
+      "You don't memorize your friend's home address — you save their name in your contacts, and your phone looks it up for you. DNS does exactly this for domains: it translates a human-friendly name like example.com into a machine address (an IP) like 192.0.2.10.",
+      "Without DNS, every visitor would need to type a raw IP address to reach your app — which is exactly why DNS exists as the first step of every request.",
     ],
     subsections: [
       {
@@ -42,52 +28,47 @@ const sections = [
       },
     ],
     codeBlocks: ["dig example.com +short"],
-    closing: "Almost every deployment issue starts with the same question: does DNS actually point where I think it does?",
+    closing: "This single command answers the most important question in any deployment: does DNS actually point where I think it does?",
   },
   {
-    title: "The Proxy Layer: A Middleman In Front of Your Server",
+    title: "Step 2: The Proxy Layer — An Optional Middleman In Front of DNS",
     paragraphs: [
-      "Many teams put a service like Cloudflare in front of their domain, on top of their own server.",
+      "Many teams add a service like Cloudflare on top of their domain, sitting between visitors and the actual server.",
       "Picture a security company that convinces every tenant in a building to route deliveries through their own sorting facility first. Packages get scanned, frequently-requested items get cached for speed, and the building's real address is never exposed publicly — everything is quietly forwarded to the real door behind the scenes.",
+      "This is optional, not a requirement of DNS itself — a domain can point straight at a server with no middleman at all.",
     ],
     list: [
       "Hosting the DNS — being the phone book",
-      "Proxying traffic — sitting between visitors and the server, encrypting at the edge, hiding the real IP",
+      "Proxying traffic — sitting between visitors and the server, encrypting at the edge, hiding the real IP, caching static content",
     ],
     callout: [
       "DNS only = requests go straight to your server.",
       "Proxied = requests go through the middleman first.",
-      "Both can look identical to a visitor.",
-      "Only one of them lets a certificate tool talk to your server directly.",
+      "Both look identical to a regular visitor.",
+      "The difference only matters once you start issuing certificates or debugging why something isn't reaching your server.",
     ],
   },
   {
-    title: "Why This Breaks SSL Certificate Setup",
+    title: "Step 3: Arriving at the Server — Ports and the Reverse Proxy",
     paragraphs: [
-      "Free certificate tools like Let's Encrypt verify you actually own a domain with a simple trick: they ask your server to serve a specific file at a specific URL, over plain HTTP, and then check it directly.",
-      "If a proxy is sitting in front of your server, that verification request may never actually reach your machine — it gets intercepted, redirected, or cached by the middleman instead. The result is a confusing failure, even though your server's own configuration is completely correct.",
+      "Once DNS resolves and the request reaches the actual server, a new problem appears: one server has a single IP address, but it might run many unrelated apps at once, each tucked behind its own internal port.",
+      "Port numbers work like door numbers in an apartment building — two apps can't use the same door at the same time, and something needs to greet each visitor and send them down the right hallway.",
+      "That something is a reverse proxy, and on most Linux servers it's NGINX. It listens on the public-facing doors — port 80 for plain traffic, port 443 for encrypted traffic — reads which domain was requested, and routes accordingly.",
     ],
-    diagram: ["Certificate Authority", "        ↓", "     Proxy  ← request stops here", "        ↓", "  Your Server (never sees it)"],
-    closing: "The fix is either temporarily bypassing the proxy while issuing the certificate, or using a DNS-based verification method that works regardless of any proxy layer.",
-  },
-  {
-    title: "Every App Needs Its Own Door Number",
-    paragraphs: [
-      "Port numbers are door numbers. Two apps can't use the same door at the same time — whichever one tries to start second simply fails.",
-      "The reverse proxy listens on the public-facing doors — 80 for plain traffic, 443 for encrypted traffic — and silently routes each request to the correct internal door based on which domain was requested.",
-    ],
+    diagram: ["Visitor", "  ↓", "Reverse Proxy (port 80/443)", "  ↓", "Correct app on its internal port"],
     codeBlocks: ["sudo ss -tulpn | grep LISTEN"],
   },
   {
-    title: "Two Fundamentally Different Deployment Patterns",
+    title: "Step 4: What the Reverse Proxy Actually Forwards To",
     paragraphs: [
-      "This is the single most important distinction to get right — mixing these up causes some of the most confusing deployment bugs.",
+      "This is where the specific technology stack starts to matter, because not every app needs the same kind of destination behind the reverse proxy.",
     ],
     subsections: [
       {
         heading: "Pattern A — Server-rendered apps",
         paragraphs: [
-          "Frameworks that render pages on the server, or expose live API routes, need a persistent running process. The app is a program that stays alive and answers each request in real time.",
+          "Frameworks that render pages on the server, or expose live API routes, need a persistent running process — the app is a program that stays alive and answers each request in real time.",
+          "The reverse proxy forwards traffic to that process's internal port.",
         ],
         codeBlocks: ["location / {\n    proxy_pass http://localhost:3001;\n    proxy_http_version 1.1;\n    proxy_set_header Host $host;\n}"],
       },
@@ -103,7 +84,7 @@ const sections = [
     callout: "Running a static build through a process manager as if it were a live server either fails outright or does nothing useful — there's simply no server to keep alive.",
   },
   {
-    title: "Why try_files Matters",
+    title: "Why try_files Matters for Static Apps",
     paragraphs: [
       "Single-page apps handle routing entirely in the browser using JavaScript. If a visitor directly loads example.com/dashboard, there's no real file on disk called dashboard.",
       "The try_files fallback tells the server: if you can't find a matching file, just serve index.html anyway, and let the app's own router take over from there. Without this line, refreshing any page other than the homepage returns a 404.",
@@ -112,7 +93,8 @@ const sections = [
   {
     title: "Keeping Server-Rendered Apps Alive",
     paragraphs: [
-      "A process manager is like a building manager who checks on a tenant periodically. If the tenant collapses, the manager immediately moves a fresh one into the same spot, so the apartment is never empty for long.",
+      "For Pattern A apps, something needs to keep that process running long-term, restart it if it crashes, and bring it back after a server reboot.",
+      "A process manager does this job — like a building manager who checks on a tenant periodically. If the tenant collapses, the manager immediately moves a fresh one into the same spot, so the apartment is never empty for long.",
     ],
     codeBlocks: ["pm2 start npm --name \"myapp\" -- start\npm2 list\npm2 save\npm2 startup"],
     list: [
@@ -123,24 +105,46 @@ const sections = [
     closing: "A telltale sign of trouble is a process that restarts immediately after starting, over and over — worth investigating with the process manager's logs rather than ignoring.",
   },
   {
-    title: "SSL Certificates: Proving a Site Is What It Claims to Be",
+    title: "Step 5: SSL — Making the Connection Private",
     paragraphs: [
-      "An SSL certificate is like a wax seal on a letter, proving it genuinely came from who it claims to. Without encryption, anyone on the network path between visitor and server could theoretically read the traffic.",
+      "At this point, requests can successfully reach the right app — but by default, that conversation happens in plain text. Anyone on the network path between visitor and server could theoretically read it.",
+      "An SSL certificate is like a wax seal on a letter, proving a site genuinely is who it claims to be, and encrypting everything sent back and forth so it can't be read in transit.",
     ],
     codeBlocks: ["Without HTTPS: Password → plain text → Internet", "With HTTPS: Password → encrypted → Internet"],
-    closing: "In production, the reverse proxy commonly terminates SSL — meaning your application often receives already-decrypted, already-secured traffic, and doesn't need to think about encryption itself.",
   },
   {
-    title: "A Debugging Checklist Worth Keeping",
+    title: "How SSL Certificates Actually Get Issued",
     paragraphs: [
-      "Almost every deployment issue can be narrowed down with the same handful of checks, run in this order.",
+      "Free certificate authorities like Let's Encrypt issue certificates automatically, using a simple ownership check called the HTTP-01 challenge.",
+      "The tool temporarily places a specific file at a specific URL on your server. The certificate authority then requests that exact file over plain HTTP, directly. If the content matches what's expected, ownership is proven, and a certificate is issued.",
     ],
     list: [
-      "dig example.com +short — does DNS even point where you think it does?",
-      "curl -I https://example.com — what's actually responding? The Server header alone often tells you which layer answered.",
-      "nginx -t — is the configuration even valid, before worrying about anything downstream?",
-      "Check the process manager's status — is the app actually alive and stable, not crash-looping?",
-      "Read the actual config file directly — don't assume what's in it. Small copy-paste artifacts can silently break things that look fine at a glance.",
+      "The verification request must reach your actual server unmodified",
+      "If a proxy layer sits in front of the domain, make sure it's set to pass the request straight through — not redirect or cache it — during issuance",
+      "Once the certificate is issued and installed, the reverse proxy uses it to encrypt all future traffic on port 443",
+    ],
+    codeBlocks: ["sudo certbot                     # interactive setup\nsudo certbot certificates        # list everything currently issued\nsudo certbot renew --dry-run     # confirm renewal will work later"],
+    closing: "Certificates typically last 90 days and renew automatically in the background, as long as the same conditions that allowed the first issuance still hold true at renewal time.",
+  },
+  {
+    title: "Step 6: The Full Request Lifecycle, End to End",
+    paragraphs: [
+      "With every piece now covered, here's the complete journey a single request takes in a fully deployed, production-ready setup.",
+    ],
+    diagram: [
+      "Browser types example.com",
+      "        ↓",
+      "DNS resolves the domain to an IP",
+      "        ↓",
+      "(optional) Proxy layer receives the request first",
+      "        ↓",
+      "Request reaches the server on port 443",
+      "        ↓",
+      "Reverse proxy decrypts via the installed SSL certificate",
+      "        ↓",
+      "Reverse proxy routes to the correct app",
+      "        ↓",
+      "Static files served directly, or a running app process answers",
     ],
   },
   {
@@ -157,26 +161,39 @@ const sections = [
     ],
   },
   {
+    title: "A Debugging Checklist Worth Keeping",
+    paragraphs: [
+      "Almost every deployment issue can be narrowed down with the same handful of checks, run in this order — following the exact path a request takes.",
+    ],
+    list: [
+      "dig example.com +short — does DNS even point where you think it does?",
+      "curl -I https://example.com — what's actually responding? The Server header alone often tells you which layer answered.",
+      "nginx -t — is the reverse proxy configuration even valid, before worrying about anything downstream?",
+      "Check the process manager's status — is the app actually alive and stable, not crash-looping?",
+      "Read the actual config file directly — don't assume what's in it. Small copy-paste artifacts can silently break things that look fine at a glance.",
+    ],
+  },
+  {
     title: "Key Takeaways",
     subsections: [
       {
-        heading: "1. DNS decides where traffic goes first.",
-        paragraphs: ["Nothing else matters if DNS doesn't point at your server."],
+        heading: "1. DNS decides where a request goes first.",
+        paragraphs: ["Nothing else in this chain matters if DNS doesn't point at your server."],
       },
       {
-        heading: "2. A proxy layer can hide your server from certificate tools.",
-        paragraphs: ["Know whether your domain is DNS-only or actively proxied."],
+        heading: "2. A proxy layer is optional, and sits before your server.",
+        paragraphs: ["Know whether your domain is DNS-only or actively proxied — it changes how certificate issuance behaves."],
       },
       {
-        heading: "3. Static and server-rendered apps deploy differently.",
-        paragraphs: ["One needs a running process; the other just needs files on disk."],
+        heading: "3. The reverse proxy on your server decides which app answers.",
+        paragraphs: ["One server, one IP, many apps — routed by requested domain."],
       },
       {
-        heading: "4. Process managers keep live apps alive.",
-        paragraphs: ["They restart crashed processes and survive server reboots."],
+        heading: "4. Static and server-rendered apps deploy differently.",
+        paragraphs: ["One needs a running process kept alive by a process manager; the other just needs files on disk."],
       },
       {
-        heading: "5. SSL is usually terminated at the proxy, not the app.",
+        heading: "5. SSL is usually issued and terminated at the reverse proxy.",
         paragraphs: ["Your application often never sees unencrypted traffic at all."],
       },
     ],
@@ -184,8 +201,8 @@ const sections = [
   {
     title: "Final Thoughts",
     paragraphs: [
-      "None of this is exotic — it's the same small set of moving parts, recombined slightly differently, behind almost every app running on the internet today.",
-      "Once the pattern clicks, a brand-new stack or framework stops being intimidating. It's just a question of which of these two patterns it falls into — and the rest follows.",
+      "None of this is exotic — it's the same small set of moving parts, in the same order, behind almost every app running on the internet today.",
+      "Once you can trace a request's full journey from DNS to a running app, a brand-new stack or framework stops being intimidating. It's just a question of which pattern it falls into — and the rest follows.",
     ],
   },
 ];
@@ -354,7 +371,7 @@ export default function VpsDeploymentBlogPage() {
             <span className="blogPage__tag">&lt;/</span>Deploying to a Real Server <span className="blogPage__tag">&gt;</span>
           </h2>
           <p className="blogPage__lead">
-            The first time you deploy an app outside of localhost, it can feel like a black box — you run a dozen commands and it either works or it doesn't. In reality, it's a small number of simple, reusable ideas. This is the mental model I wish I'd had from the start.
+            A request's full journey from typing a domain into a browser to a running app answering — DNS, an optional proxy layer, the reverse proxy on the server, deployment patterns, process management, and SSL, in the order they actually happen.
           </p>
           <div className="blogPage__meta">
             <span className="blogPage__pill">DevOps • DNS • SSL</span>
