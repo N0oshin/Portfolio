@@ -27,7 +27,7 @@ function App() {
           {/* Individual Blog View (Dynamic Route) */}
           <Route path="/blog/nginx-explained" element={<NginxBlog />} />
           <Route path="/blog/microservice-architecture" element={<MicroserviceBlog />} />
-          <Route path="/blog/VpsDeploymentBlogPage" element={<VpsDeploymentBlog />} />
+          <Route path="/blog/deploying-to-a-real-server" element={<VpsDeploymentBlog />} />
 
         </Routes>
       </main>
