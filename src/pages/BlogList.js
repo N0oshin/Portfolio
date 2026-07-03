@@ -22,6 +22,18 @@ const blogPosts = [
     'Distributed Systems'],
     desc: 'A practical deep dive into microservice architecture covering service boundaries, REST vs event-driven communication, API gateways, service discovery, resilience patterns, distributed transactions, observability, and real-world production design principles.',
     link: '/blog/microservice-architecture',
+  },
+  {
+    id: '03',
+    title: 'Deploying to a Real Server: DNS, Reverse Proxies, and the SSL Layer Nobody Explains',
+    category: 'Backend',
+    tags: ['DevOps',
+    'NGINX',
+    'DNS',
+    'SSL/TLS',
+    'Process Management'],
+    desc: 'A practical deep dive into what actually happens when an app goes from localhost to production — DNS resolution, reverse proxy routing, the difference between static and server-rendered deployments, process managers like PM2, SSL certificate issuance, and the proxy layer that quietly breaks all of it if you don\'t understand how it works.',
+    link: '/blog/deploying-to-a-real-server',
   }
 ];
 
