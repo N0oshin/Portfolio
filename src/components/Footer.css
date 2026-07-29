@@ -44,3 +44,9 @@
   transition: color 0.2s;
 }
 .footer__social:hover { color: var(--white); }
+
+@media (min-width: 769px) {
+  .footer__brand { font-size: 1.05rem; }
+  .footer__copy { font-size: 0.87rem; }
+  .footer__social { font-size: 1.15rem; }
+}

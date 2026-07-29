@@ -108,3 +108,12 @@
   .skills__tabs { flex-direction: row; overflow-x: auto; }
   .skills__tab { border-bottom: none; border-right: 1px solid var(--mid); min-width: 130px; }
 }
+
+@media (min-width: 769px) {
+  .skills__section-label { font-size: 0.9rem; }
+  .skills__heading { font-size: clamp(2.15rem, 5vw, 3.65rem); }
+  .skills__tab-tag { font-size: 0.87rem; }
+  .skills__tab-label { font-size: 1.05rem; }
+  .skills__item { font-size: 1.07rem; }
+  .skills__bullet { font-size: 0.8rem; }
+}

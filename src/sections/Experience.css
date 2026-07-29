@@ -149,3 +149,15 @@
   }
   .experience__tab--active { border-left: none; border-bottom: 3px solid var(--dark); }
 }
+
+@media (min-width: 769px) {
+  .experience__section-label { font-size: 0.9rem; }
+  .experience__heading { font-size: clamp(2.15rem, 5vw, 3.65rem); }
+  .experience__tab-co { font-size: 1.05rem; }
+  .experience__tab-period { font-size: 0.85rem; }
+  .experience__role { font-size: 1.35rem; }
+  .experience__at { font-size: 1.15rem; }
+  .experience__meta { font-size: 0.9rem; }
+  .experience__bullet-item { font-size: 1.08rem; }
+  .experience__bullet-arrow { font-size: 0.85rem; }
+}

@@ -88,3 +88,11 @@
   }
   .about__stats-col { max-width: 400px; }
 }
+
+@media (min-width: 769px) {
+  .about__section-label { font-size: 0.9rem; }
+  .about__heading { font-size: clamp(2.15rem, 5vw, 3.65rem); }
+  .about__text-col p { font-size: 1.15rem; }
+  .about__stat-value { font-size: 1.65rem; }
+  .about__stat-label { font-size: 0.75rem; }
+}

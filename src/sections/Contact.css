@@ -171,3 +171,15 @@ a.contact__detail-value:hover { text-decoration: underline; }
     gap: 2.5rem;
   }
 }
+
+@media (min-width: 769px) {
+  .contact__section-label { font-size: 0.9rem; }
+  .contact__heading { font-size: clamp(2.15rem, 5vw, 3.65rem); }
+  .contact__intro { font-size: 1.15rem; }
+  .contact__detail-label { font-size: 0.87rem; }
+  .contact__detail-value { font-size: 1.1rem; }
+  .contact__resume-btn { font-size: 0.97rem; }
+  .contact__label { font-size: 0.87rem; }
+  .contact__input { font-size: 1.08rem; }
+  .contact__submit { font-size: 1rem; }
+}

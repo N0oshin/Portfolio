@@ -599,6 +599,20 @@ export default function MicroserviceArchitectureBlogPage() {
           color: #b3b3b3;
           line-height: 1.6;
         }
+
+        @media (min-width: 769px) {
+          .blogPage__section-label { font-size: 0.9rem; }
+          .blogPage__heading { font-size: clamp(1.95rem, 4vw, 2.95rem); }
+          .blogPage__lead { font-size: 1.25rem; }
+          .blogPage__pill { font-size: 0.83rem; }
+          .blogPage__content h2 { font-size: 1.5rem; }
+          .blogPage__content p { font-size: 1.1rem; }
+          .blogPage__content li { font-size: 1.1rem; }
+          .blogPage__callout { font-size: 1.07rem; }
+          .blogPage__codeBlock, .blogPage__diagramBlock { font-size: 1rem; }
+          .blogPage__tinyLabel { font-size: 1rem; }
+          .blogPage__footer-note { font-size: 1rem; }
+        }
       `}</style>
 
       <main className="blogPage__inner">

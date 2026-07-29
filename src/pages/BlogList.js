@@ -34,6 +34,14 @@ const blogPosts = [
     'Process Management'],
     desc: 'A practical deep dive into what actually happens when an app goes from localhost to production — DNS resolution, reverse proxy routing, the difference between static and server-rendered deployments, process managers like PM2, SSL certificate issuance, and the proxy layer that quietly breaks all of it if you don\'t understand how it works.',
     link: '/blog/deploying-to-a-real-server',
+  },
+  {
+    id: '04',
+    title: 'Hardware, Software, and Servers: Understanding the Foundation Every Developer Should Know',
+    category: 'Backend',
+    tags: ['Fundamentals', 'Operating Systems', 'Linux', 'Servers', 'Node.js'],
+    desc: 'A first-principles breakdown of hardware, software, operating systems, kernels, and what a server actually is, and why understanding these layers changes how you debug production systems.',
+    link: '/blog/hardware-software-servers',
   }
 ];
 

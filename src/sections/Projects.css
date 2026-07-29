@@ -146,3 +146,15 @@
 @media (max-width: 600px) {
   .projects__grid { grid-template-columns: 1fr; }
 }
+
+@media (min-width: 769px) {
+  .projects__section-label { font-size: 0.9rem; }
+  .projects__heading { font-size: clamp(2.15rem, 5vw, 3.65rem); }
+  .projects__filter { font-size: 0.93rem; }
+  .projects__card-id { font-size: 0.85rem; }
+  .projects__card-cat { font-size: 0.83rem; }
+  .projects__card-title { font-size: 1.2rem; }
+  .projects__card-desc { font-size: 1.03rem; }
+  .projects__tag-pill { font-size: 0.83rem; }
+  .projects__card-link { font-size: 0.93rem; }
+}

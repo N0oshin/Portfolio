@@ -195,3 +195,14 @@
   .hero__about-text { text-align: left; }
   .hero__cta-row { justify-content: flex-start; }
 }
+
+@media (min-width: 769px) {
+  .hero__name { font-size: clamp(1.25rem, 2.2vw, 1.7rem); }
+  .hero__title { font-size: 1.15rem; }
+  .hero__btn { font-size: 0.97rem; }
+  .hero__social-link { font-size: 1.65rem; }
+  .hero__about-heading { font-size: clamp(1.75rem, 3.5vw, 2.75rem); }
+  .hero__about-text { font-size: 1.13rem; }
+  .hero__role-badge { font-size: 1rem; }
+  .hero__role-label { font-size: 0.9rem; }
+}
