@@ -33,7 +33,7 @@ export default function Hero() {
           {/* Replace with your actual photo */}
           <div className="hero__photo-placeholder" aria-label="Profile photo">
             <img
-              src="/profile.jpeg"
+              src="/profile.png"
               alt="Profile"
               className="hero__photo"
             />
