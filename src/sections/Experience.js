@@ -8,13 +8,13 @@ const jobs = [
     period: '2026 — Present',
     location: 'Dubai',
     bullets: [
-      'Developed and maintained 6 Node.js microservices for scalable backend applications.',
+      'Developed and maintained Node.js microservices for scalable backend applications.',
       'Deployed and managed applications on Ubuntu VPS using PM2, Nginx, and SSH.',
       'Configured domains, SSL certificates, reverse proxies, and production server environments.',
       'Collaborated with developers to troubleshoot production issues, deploy updates, and maintain application reliability.',
       'Tested and integrated REST APIs using Postman and supported frontend-backend connectivity.',
       'Managed Git-based deployment workflows for multiple client projects.',
-      'Technologies: Node.js, Express.js, Ubuntu Linux, Nginx, PM2, Git, GitHub, REST APIs, Postman, SSH',
+      
     ],
   },
   {

@@ -20,7 +20,7 @@ const categories = [
   {
     label: 'DevOps & Cloud',
     tag: '</DevOps>',
-    skills: ['AWS (EC2, S3, Lambda)', 'Docker', 'CI/CD (GitHub Actions)', 'Terraform', 'Linux', 'Nginx', 'Kubernetes (basics)', 'Vercel / Netlify'],
+    skills: ['AWS (EC2, S3, Lambda)', 'Docker', 'CI/CD (GitHub Actions)', 'Terraform', 'Linux', 'Nginx', 'Kubernetes (basics)', 'Vercel / Netlify', 'PM2', 'Git', 'GitHub', 'Postman', 'SSH'],
   },
 ];
 
