@@ -11,13 +11,15 @@
   --mono:    'Space Mono', monospace;
   --sans:    'Sora', sans-serif;
   --radius:  0px;
+  --surface:       rgba(255, 255, 255, 0.82);
+  --surface-light: rgba(240, 242, 245, 0.82);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--sans);
-  background: var(--white);
+  background: transparent;
   color: var(--dark);
   overflow-x: hidden;
 }

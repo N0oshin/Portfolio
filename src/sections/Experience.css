@@ -1,6 +1,8 @@
 .experience {
   padding: 6rem 5vw;
-  background: var(--light);
+  background: var(--surface-light);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid var(--mid);
 }
 
@@ -37,7 +39,7 @@
 .experience__tabs {
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: var(--surface);
 }
 
 .experience__tab {
@@ -76,7 +78,7 @@
 }
 
 .experience__detail {
-  background: var(--white);
+  background: var(--surface);
   padding: 2.5rem;
   display: flex;
   flex-direction: column;

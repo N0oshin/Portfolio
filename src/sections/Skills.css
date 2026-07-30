@@ -1,6 +1,8 @@
 .skills {
   padding: 6rem 5vw;
-  background: var(--light);
+  background: rgba(240, 242, 245, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid var(--mid);
 }
 
@@ -37,7 +39,7 @@
 .skills__tabs {
   display: flex;
   flex-direction: column;
-  background: var(--white);
+  background: var(--surface);
 }
 
 .skills__tab {
@@ -73,7 +75,7 @@
 }
 
 .skills__panel {
-  background: var(--white);
+  background: var(--surface);
   padding: 2.5rem;
 }
 

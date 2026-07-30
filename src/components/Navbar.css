@@ -11,7 +11,9 @@
 }
 
 .navbar--scrolled {
-  background: var(--white);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 1px 0 var(--mid);
 }
 

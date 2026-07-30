@@ -1,6 +1,8 @@
 .projects {
   padding: 6rem 5vw;
-  background: var(--white);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid var(--mid);
 }
 
@@ -64,7 +66,7 @@
 }
 
 .projects__card {
-  background: var(--white);
+  background: var(--surface);
   padding: 2rem;
   display: flex;
   flex-direction: column;

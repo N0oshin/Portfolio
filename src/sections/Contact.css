@@ -1,6 +1,6 @@
 .contact {
   padding: 6rem 5vw;
-  background: var(--white);
+  background: transparent;
   border-top: 1px solid var(--mid);
 }
 

@@ -1,6 +1,8 @@
 .about {
   padding: 6rem 5vw;
-  background: var(--white);
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid var(--mid);
 }
 
@@ -57,7 +59,7 @@
 }
 
 .about__stat {
-  background: var(--light);
+  background: var(--surface-light);
   padding: 1.8rem 1.4rem;
   display: flex;
   flex-direction: column;
